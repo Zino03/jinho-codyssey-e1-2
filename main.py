@@ -57,7 +57,7 @@ def read(prompt, low, high):
     while True:
         select = input(prompt).strip() # 앞뒤 공백 제거
         if select == "": # 빈 입력 처리
-            print("값을 입력해주세요")
+            print("값을 입력해주세요\n")
             continue
         
         try:
@@ -66,7 +66,7 @@ def read(prompt, low, high):
                 return select_num
             print(f"{low} ~ {high} 사이의 숫자를 입력해주세요.")
         except(ValueError):
-            print("숫자를 입력해주세요.")
+            print("숫자를 입력해주세요.\n")
 
 
 def play_quiz(quizzes):
@@ -91,13 +91,13 @@ def play_quiz(quizzes):
                 
         print(f"맞힌 개수: {count} / 전체 문제 수: {quiz_len}")
         
-        score = round(count / quiz_len * 100, 2)
+        score = round(count / quiz_len * 100)
         print(f"점수: {score}점\n")
         return score
 
+
 def add_quiz(quizzes):
     print("추가하실 퀴즈를 입력해주세요")
-    question = ""
     while True:
         question = input("문제: ").strip()
         if question == "":
@@ -125,7 +125,7 @@ def add_quiz(quizzes):
 
 def list_quizzes(quizzes):
     if not quizzes:
-        print("저장된 퀴즈가 없습니다.")
+        print("저장된 퀴즈가 없습니다.\n")
     else:
         print(f"\n등록된 퀴즈 목록 (총 {len(quizzes)}개)\n")
         n = 1
@@ -134,23 +134,44 @@ def list_quizzes(quizzes):
             n += 1
         print()
             
-        
-  
 
+def show_score(best_score):
+    if best_score == None:
+        print("아직 퀴즈를 풀지 않았습니다.\n")
+    else:
+        print(f"최고 점수: {best_score}점!\n")
+    
+
+def update_score(best_score, score):
+    if score == None:
+        print("등록된 퀴즈가 없습니다.\n")
+        return None
+    
+    if best_score == None:
+        best_score = 0
+        
+    if best_score < score:
+        print("새로운 최고 점수입니다!\n")
+        return score
+    return best_score
+
+  
 def main():
     quizzes = default_quizzes()
+    best_score = None
     while True:
         show_menu()
         select = read("선택: ", 1, 5)
         # 항목 구현 전
         if select == 1:
-            play_quiz(quizzes)
+            score = play_quiz(quizzes)
+            best_score = update_score(best_score, score)
         elif select == 2:
             add_quiz(quizzes)
         elif select == 3:
             list_quizzes(quizzes)
         elif select == 4:
-            break
+            show_score(best_score)
         elif select == 5:
             print("프로그램을 종료합니다")
             break
