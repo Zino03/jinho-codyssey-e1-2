@@ -95,6 +95,34 @@ def play_quiz(quizzes):
         print(f"점수: {score}점\n")
         return score
 
+def add_quiz(quizzes):
+    print("추가하실 퀴즈를 입력해주세요")
+    question = ""
+    while True:
+        question = input("문제: ").strip()
+        if question == "":
+            print("문제를 입력해주세요.")
+            continue
+        break
+        
+    choices = []
+    n = 1
+    while True:
+        c = input(f"{n}번 선택지: ").strip()
+        if c == "":
+            print("선택지를 입력해주세요.")
+            continue
+        choices.append(c)
+        n += 1
+        if n > 4:
+            break
+    
+    answer = read("정답을 입력해주세요 (1 ~ 4): ", 1, 4)
+    q = Quiz(question, choices, answer)
+    quizzes.append(q)
+    print("퀴즈 추가가 완료되었습니다!\n")
+    
+        
 
 def main():
     quizzes = default_quizzes()
@@ -105,7 +133,7 @@ def main():
         if select == 1:
             play_quiz(quizzes)
         elif select == 2:
-            break
+            add_quiz(quizzes)
         elif select == 3:
             for q in quizzes:
                 q.show_quiz()
