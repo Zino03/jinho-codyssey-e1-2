@@ -1,4 +1,36 @@
 # 퀴즈 게임
+from quiz import Quiz
+
+
+def default_quizzes():
+    # 첫 실행이나 파일 손상 시 사용할 기본 퀴즈 목록을 만들어 반환
+    return [
+        Quiz(
+            "키(key)와 값(value)의 쌍으로 데이터를 저장하는 자료형은?",
+            ["list", "dict", "tuple", "set"],
+            2,
+        ),
+        Quiz(
+            "조건식이 참인 동안 계속 반복하는 반복문은?",
+            ["while", "for", "if", "def"],
+            1,
+        ),
+        Quiz(
+            "함수가 계산한 결과를 호출한 곳으로 돌려줄 때 사용하는 키워드는?",
+            ["print", "input", "return", "break"],
+            3,
+        ),
+        Quiz(
+            "클래스로 객체를 만들 때 자동으로 실행되어 초기값을 저장하는 메서드는?",
+            ["__str__", "__del__", "__call__", "__init__"],
+            4,
+        ),
+        Quiz(
+            "오류가 발생해도 프로그램이 비정상 종료되지 않도록 처리할 때 사용하는 구문은?",
+            ["if / else", "try / except", "for / while", "import / from"],
+            2,
+        ),
+    ]
 
 # 메뉴창
 def show_menu():
