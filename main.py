@@ -1,6 +1,7 @@
 # 퀴즈 게임
 from quiz import Quiz
 
+
 def default_quizzes():
     # 첫 실행이나 파일 손상 시 사용할 기본 퀴즈 목록을 만들어 반환
     return [
@@ -36,6 +37,7 @@ def default_quizzes():
         ),
     ]
 
+
 # 메뉴창
 def show_menu():
     print("========================================")
@@ -48,13 +50,14 @@ def show_menu():
     print("5. 종료")
     print("========================================")
     
+    
 # 선택 값 읽기
 # 제대로 된 값이 입력될 때까지 반복하고 정수 반환
 def read(prompt, low, high):
     while True:
         select = input(prompt).strip() # 앞뒤 공백 제거
         if select == "": # 빈 입력 처리
-            print("메뉴를 입력해주세요")
+            print("값을 입력해주세요")
             continue
         
         try:
@@ -66,17 +69,45 @@ def read(prompt, low, high):
             print("숫자를 입력해주세요.")
 
 
+def play_quiz(quizzes):
+    count = 0
+    n = 1
+    quiz_len = len(quizzes)
+    if not quizzes:
+        print("저장된 퀴즈가 없습니다.")
+    else:
+        print("\n========================================")
+        print(f"퀴즈를 시작합니다 (총 {quiz_len}문제)\n")
+        for q in quizzes:
+            print(f"{n}.", end=" ")
+            q.show_quiz()
+            user_choice = read("정답 입력: ", 1, 4)
+            n += 1
+            if q.check(user_choice):
+                count += 1
+                print("정답입니다!\n")
+            else:
+                print(f"오답입니다ㅠㅠ (정답: {q.answer})\n")
+                
+        print(f"맞힌 개수: {count} / 전체 문제 수: {quiz_len}")
+        
+        score = round(count / quiz_len * 100, 2)
+        print(f"점수: {score}점\n")
+        return score
+
+
 def main():
+    quizzes = default_quizzes()
     while True:
         show_menu()
         select = read("선택: ", 1, 5)
         # 항목 구현 전
         if select == 1:
-            break
+            play_quiz(quizzes)
         elif select == 2:
             break
         elif select == 3:
-            for q in default_quizzes():
+            for q in quizzes:
                 q.show_quiz()
                 print()
         elif select == 4:
