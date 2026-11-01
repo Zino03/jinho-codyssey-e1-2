@@ -1,7 +1,6 @@
 # 퀴즈 게임
 from quiz import Quiz
 
-
 def default_quizzes():
     # 첫 실행이나 파일 손상 시 사용할 기본 퀴즈 목록을 만들어 반환
     return [
@@ -9,6 +8,11 @@ def default_quizzes():
             "키(key)와 값(value)의 쌍으로 데이터를 저장하는 자료형은?",
             ["list", "dict", "tuple", "set"],
             2,
+        ),
+        Quiz(
+            "다음 중 문자열(str) 값은?",
+            ["3", "3.0", "True", '"3"'],
+            4,
         ),
         Quiz(
             "조건식이 참인 동안 계속 반복하는 반복문은?",
@@ -72,7 +76,9 @@ def main():
         elif select == 2:
             break
         elif select == 3:
-            break
+            for q in default_quizzes():
+                q.show_quiz()
+                print()
         elif select == 4:
             break
         elif select == 5:
