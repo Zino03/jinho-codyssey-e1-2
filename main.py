@@ -122,7 +122,20 @@ def add_quiz(quizzes):
     quizzes.append(q)
     print("퀴즈 추가가 완료되었습니다!\n")
     
+
+def list_quizzes(quizzes):
+    if not quizzes:
+        print("저장된 퀴즈가 없습니다.")
+    else:
+        print(f"\n등록된 퀴즈 목록 (총 {len(quizzes)}개)\n")
+        n = 1
+        for q in quizzes:
+            print(f"[{n}] {q.question}")
+            n += 1
+        print()
+            
         
+  
 
 def main():
     quizzes = default_quizzes()
@@ -135,9 +148,7 @@ def main():
         elif select == 2:
             add_quiz(quizzes)
         elif select == 3:
-            for q in quizzes:
-                q.show_quiz()
-                print()
+            list_quizzes(quizzes)
         elif select == 4:
             break
         elif select == 5:
