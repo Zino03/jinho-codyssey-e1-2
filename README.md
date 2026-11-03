@@ -448,3 +448,4 @@ git merge --no-ff feature/play-quiz
 | ![퀴즈 목록](docs/screenshots/list.png) | 퀴즈 목록 |
 | ![점수 확인](docs/screenshots/score.png) | 최고 점수 확인 |
 | ![재실행 후 유지](docs/screenshots/reload.png) | 종료 후 재실행했을 때 데이터 유지 |
+> clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.
