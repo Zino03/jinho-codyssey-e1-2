@@ -1,5 +1,10 @@
+import json # json 파일 읽고 쓰는 표준 library
+from pathlib import Path # 파일 경로 다루는 도구
+
 from quiz import Quiz
 
+# state.json의 위치: 해당 파일이 있는 폴더
+STATE_FILE = Path(__file__).parent / "state.json"
 
 # 선택 값 읽기
 # 제대로 된 값이 입력될 때까지 반복하고 정수 반환
@@ -21,8 +26,9 @@ def read(prompt, low, high):
 
 class QuizGame:
     def __init__(self):
-        self.quizzes = self.default_quizzes()
-        self.best_score = -1
+        self.quizzes = self.default_quizzes() # 기본 퀴즈
+        self.best_score = -1 # 최고 점수 초기값
+        self.load_state() # 시작할 때 저장된 데이터를 불러옴
 
     def default_quizzes(self):
         # 첫 실행이나 파일 손상 시 사용할 기본 퀴즈 목록을 만들어 반환
@@ -123,6 +129,7 @@ class QuizGame:
         q = Quiz(question, choices, answer) # Quiz 객체 생성
         self.quizzes.append(q) # 퀴즈 목록에 추가
         print("퀴즈 추가가 완료되었습니다!\n")
+        self.save_state() # 추가한 퀴즈 파일에 바로 저장
 
     def list_quizzes(self): # 퀴즈 목록
         if not self.quizzes: # 저장된 퀴즈가 없는 경우
@@ -158,6 +165,7 @@ class QuizGame:
             if select == 1: # 퀴즈 풀기
                 score = self.play_quiz() # 퀴즈 풀이 후 점수 반환
                 self.best_score = self.update_score(score) # 위에서 받은 점수와 best_score 비교
+                self.save_state() # 갱신됐을 수도 있으니 파일에 저장 (갱신 안 돼도 저장해서 단순하게)  
             elif select == 2: # 퀴즈 추가
                 self.add_quiz()
             elif select == 3: # 퀴즈 목록
@@ -166,4 +174,47 @@ class QuizGame:
                 self.show_score()
             elif select == 5: # 종료
                 print("프로그램을 종료합니다")
+                self.save_state() # 종료 직전에 한 번 더 저장 (안전장치)
                 break
+            
+    def save_state(self): # 퀴즈 목록과 최고 점수를 state.json에 저장
+        data = {
+            "quizzes": [q.to_dict() for q in self.quizzes], # Quiz 객체를 dict로 바꾼 리스트
+            "best_score": self.best_score,
+        }
+        try: # 파일 쓰기 실패할 수도 있으니 try-except 사용
+            with open(STATE_FILE, "w", encoding="utf-8") as f: # 쓰기 모드로 open
+                json.dump(data, f, ensure_ascii=False, indent=4)
+                # 데이터를 json 형식으로 f에 쓰고, 한글을 그대로 저장, 들여쓰기 사용
+        except OSError:
+            print("파일 저장에 실패했습니다. 이번 변경 내용은 저장되지 않을 수 있습니다.\n") # 프로그램은 멈추지 않고 안내만 출력
+
+    def load_state(self): # state.json에서 데이터를 불러옴 (파일이 없거나 손상되면 기본 데이터를 사용)
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f: # 읽기 모드로 open
+                data = json.load(f) # 파일 내용을 읽음 (json 문법이 깨져 있으면 JSONDecodeError)
+            quizzes = [Quiz.from_dict(item) for item in data["quizzes"]] # 딕셔너리들을 Quiz 객체로 복원
+            # 키가 없으면 KeyError, 내용이 잘못되면 ValueError
+            best_score = data["best_score"] # 최고 점수 읽기 (키가 없으면 KeyError)
+            if (not isinstance(best_score, int) or isinstance(best_score, bool)
+                    or not -1 <= best_score <= 100): # 정수가 아니거나, bool이거나, 범위 밖이면 ValueError
+                raise ValueError("최고 점수가 올바르지 않습니다.")
+        except FileNotFoundError: # open 시 파일이 없는 경우
+            # 첫 실행: 기본 퀴즈를 그대로 쓰고 파일을 새로 만든다
+            self.save_state() # 기본 데이터로 state.json을 새로 만듦
+            return
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            # 파일이 있지만 내용이 손상됨: 기본 데이터로 초기화
+            print("저장 파일이 손상되어 기본 퀴즈로 초기화합니다.\n")
+            self.save_state() # 기본 데이터로 복구
+            return
+        except OSError:
+            # 읽기 권한 등 파일 접근 문제
+            print("저장 파일을 읽을 수 없어 기본 데이터로 시작합니다.\n")
+            return
+
+        # 모든 검증을 통과했을 때만 덮어씀
+        self.quizzes = quizzes
+        self.best_score = best_score
+        score_text = "없음" if best_score < 0 else f"{best_score}점"
+        print(f"저장된 데이터를 불러왔습니다. (퀴즈 {len(quizzes)}개, 최고 점수 {score_text})\n")

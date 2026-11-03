@@ -1,0 +1,65 @@
+{
+    "quizzes": [
+        {
+            "question": "키(key)와 값(value)의 쌍으로 데이터를 저장하는 자료형은?",
+            "choices": [
+                "list",
+                "dict",
+                "tuple",
+                "set"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "다음 중 문자열(str) 값은?",
+            "choices": [
+                "3",
+                "3.0",
+                "True",
+                "\"3\""
+            ],
+            "answer": 4
+        },
+        {
+            "question": "조건식이 참인 동안 계속 반복하는 반복문은?",
+            "choices": [
+                "while",
+                "for",
+                "if",
+                "def"
+            ],
+            "answer": 1
+        },
+        {
+            "question": "함수가 계산한 결과를 호출한 곳으로 돌려줄 때 사용하는 키워드는?",
+            "choices": [
+                "print",
+                "input",
+                "return",
+                "break"
+            ],
+            "answer": 3
+        },
+        {
+            "question": "클래스로 객체를 만들 때 자동으로 실행되어 초기값을 저장하는 메서드는?",
+            "choices": [
+                "__str__",
+                "__del__",
+                "__call__",
+                "__init__"
+            ],
+            "answer": 4
+        },
+        {
+            "question": "오류가 발생해도 프로그램이 비정상 종료되지 않도록 처리할 때 사용하는 구문은?",
+            "choices": [
+                "if / else",
+                "try / except",
+                "for / while",
+                "import / from"
+            ],
+            "answer": 2
+        }
+    ],
+    "best_score": 100
+}
