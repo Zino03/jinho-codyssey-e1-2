@@ -395,6 +395,12 @@ git log --oneline --graph --all
 ```
 
 ```
+* 6444eab docs: 실행 로그와 입력 검증 예시(17장) 추가
+* 7f11efc feat: 백업 복구 절차와 json 저장 방식 대안 추가
+* 3a7507c chore: 사전 평가용 스크린샷 임시 제거
+* f27d9ff docs/README 수정
+* 093e248 캡쳐 추가 + state.json 깨진 입력으로 저장 실패 문제 수정
+* afa163c README 수정
 * 641c5f9 docs: clone 실습용 README 한 줄 추가
 * 3ceacc0 docs: README 작성
 * cb09019 feat: state.json 저장 및 불러오기 구현
@@ -405,14 +411,33 @@ git log --oneline --graph --all
 * ff15e86 feat: 퀴즈 목록 기능 구현
 * fd2c9ec feat: 퀴즈 추가 기능 구현
 *   49b6957 Merge branch 'feature/play-quiz'
-|| * 117047a Feat: 퀴즈 출제 기능 구현
-|/
+|\  
+| * 117047a Feat: 퀴즈 출제 기능 구현
+|/  
 * 07d1683 feat: 퀴즈 목록 확인 (3번 메뉴)
 * f7a3745 feat: 퀴즈 기본 데이터
 * ba8baea feat: Quiz 클래스 구현
 * 3d5a9dd feat: 메뉴 및 입력 처리 기능 구현
 * df028e4 Docs: 저장소 초기 설정 및 README 뼈대 추가
 ```
+
+**커밋 수 요약** (`git log --oneline | wc -l` 기준, 이 README 작성 시점)
+
+```bash
+$ git log --oneline | wc -l
+22
+```
+
+| 구분 | 커밋 수 | 내용 |
+|---|---|---|
+| 전체 | **22개** (미션 기준 10개 이상 충족) | 병합 커밋 1개 포함 |
+| `feat` / `Feat` | 11개 | 메뉴, Quiz 클래스, 기본 데이터, 퀴즈 풀기/추가/목록/점수, 저장, 백업 등 기능 구현 |
+| `docs` / `Docs` | 8개 | README 작성과 보완, 주석 정리, clone 실습 |
+| `refactor` | 1개 | `QuizGame` 클래스로 책임 분리 |
+| `chore` | 1개 | 평가 전 임시 정리 |
+| `merge` | 1개 | `feature/play-quiz` 브랜치를 `main`에 병합 |
+
+커밋 수는 작업을 이어가면 늘어나므로, 최신 값은 위 명령으로 확인할 수 있습니다.
 
 ### 브랜치 생성과 병합 기록
 
