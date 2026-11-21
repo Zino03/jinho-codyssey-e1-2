@@ -353,7 +353,25 @@ python3 main.py
 git log --oneline --graph --all
 ```
 
-(실제 출력 붙여넣기)
+```
+* 641c5f9 docs: clone 실습용 README 한 줄 추가
+* 3ceacc0 docs: README 작성
+* cb09019 feat: state.json 저장 및 불러오기 구현
+* 4022682 feat: Quiz의 dict 변환/복원 메서드 추가
+* e219805 refactor: QuizGame 클래스로 분리
+* 27278f6 docs: main.py 주석 정리
+* eb1100e feat: 최고 점수 기능 구현
+* ff15e86 feat: 퀴즈 목록 기능 구현
+* fd2c9ec feat: 퀴즈 추가 기능 구현
+*   49b6957 Merge branch 'feature/play-quiz'
+|| * 117047a Feat: 퀴즈 출제 기능 구현
+|/
+* 07d1683 feat: 퀴즈 목록 확인 (3번 메뉴)
+* f7a3745 feat: 퀴즈 기본 데이터
+* ba8baea feat: Quiz 클래스 구현
+* 3d5a9dd feat: 메뉴 및 입력 처리 기능 구현
+* df028e4 Docs: 저장소 초기 설정 및 README 뼈대 추가
+```
 
 ### 브랜치 생성과 병합 기록
 
@@ -364,16 +382,78 @@ git checkout main
 git merge --no-ff feature/play-quiz
 ```
 
-(실제 출력 붙여넣기)
+```
+* 49b6957 Merge branch 'feature/play-quiz'     <- main에 병합한 커밋 (부모 2개)
+|| * 117047a Feat: 퀴즈 출제 기능 구현            <- feature/play-quiz 브랜치에서 작업한 커밋
+|/
+* 07d1683 feat: 퀴즈 목록 확인 (3번 메뉴)       <- 브랜치가 갈라진 지점
+```
 
 ### clone과 pull 실습
 
-1. 저장소를 **다른 폴더**에 복제했습니다.
+1. 저장소를 **다른 폴더**(`e1-2-clone`)에 복제했습니다.
 2. 복제한 폴더에서 README에 한 줄을 추가하고 commit, push했습니다.
-3. 원래 작업 폴더에서 `git pull`로 변경 사항을 가져와 반영을 확인했습니다.
+3. 원래 작업 폴더(`e1-2`)에서 `git pull`로 변경 사항을 가져와 반영을 확인했습니다.
+
+**1) clone**
 
 ```bash
-(실제 명령과 출력 붙여넣기)
+bjs6047@Jinho:/mnt/c/Users/b4046/Desktop/코디세이$ git clone https://github.com/Zino03/jinho-codyssey-e1-2.git e1-2-clone
+Cloning into 'e1-2-clone'...
+remote: Enumerating objects: 47, done.
+(중략)
+Resolving deltas: 100% (25/25), done.
+bjs6047@Jinho:/mnt/c/Users/b4046/Desktop/코디세이$ cd e1-2-clone
+bjs6047@Jinho:/mnt/c/Users/b4046/Desktop/코디세이/e1-2-clone$ git log --oneline -3
+3ceacc0 (HEAD -> main, origin/main, origin/HEAD) docs: README 작성
+cb09019 feat: state.json 저장 및 불러오기 구현
+4022682 feat: Quiz의 dict 변환/복원 메서드 추가
+```
+- `git clone 주소 폴더이름`: 원격 저장소를 새 폴더에 통째로 복제 (이력 포함)
+- 복제본의 최신 커밋이 원래 저장소와 같음을 `git log`로 확인
+
+**2) 복제본에서 수정, commit, push**
+
+```bash
+bjs6047@Jinho:.../e1-2-clone$ printf "\n> clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.\n" >> README.md
+bjs6047@Jinho:.../e1-2-clone$ git add README.md
+bjs6047@Jinho:.../e1-2-clone$ git commit -m "docs: clone 실습용 README 한 줄 추가"
+[main 641c5f9] docs: clone 실습용 README 한 줄 추가
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+bjs6047@Jinho:.../e1-2-clone$ git push
+(중략)
+To https://github.com/Zino03/jinho-codyssey-e1-2.git
+   3ceacc0..641c5f9  main -> main
+```
+
+**3) 원래 폴더에서 pull**
+
+```bash
+bjs6047@Jinho:.../e1-2$ git pull
+remote: Enumerating objects: 5, done.
+(중략)
+From https://github.com/Zino03/jinho-codyssey-e1-2
+   3ceacc0..641c5f9  main       -> origin/main
+Updating 3ceacc0..641c5f9
+Fast-forward
+ README.md | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+```
+- `git pull`: 원격의 새 커밋을 가져와서 현재 브랜치에 합침
+- `Fast-forward`: 내 쪽에 새 커밋이 없어서 합칠 것 없이 최신 커밋으로 이동
+
+**반영 확인**
+
+```
+$ git log --oneline -3
+641c5f9 (HEAD -> main, origin/main) docs: clone 실습용 README 한 줄 추가
+3ceacc0 docs: README 작성
+cb09019 feat: state.json 저장 및 불러오기 구현
+
+$ tail -3 README.md
+| ![재실행 후 유지](docs/screenshots/reload.png) | 종료 후 재실행했을 때 데이터 유지 |
+
+> clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.
 ```
 
 ## 13. 검증 결과
@@ -448,4 +528,5 @@ git merge --no-ff feature/play-quiz
 | ![퀴즈 목록](docs/screenshots/list.png) | 퀴즈 목록 |
 | ![점수 확인](docs/screenshots/score.png) | 최고 점수 확인 |
 | ![재실행 후 유지](docs/screenshots/reload.png) | 종료 후 재실행했을 때 데이터 유지 |
+
 > clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.
