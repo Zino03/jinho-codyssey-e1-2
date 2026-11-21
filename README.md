@@ -451,7 +451,7 @@ $ git log --oneline -3
 cb09019 feat: state.json 저장 및 불러오기 구현
 
 $ tail -3 README.md
-| ![재실행 후 유지](docs/screenshots/reload.png) | 종료 후 재실행했을 때 데이터 유지 |
+| ![재실행 후 유지](docs/screenshots/load.png) | 종료 후 재실행했을 때 데이터 유지 |
 
 > clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.
 ```
@@ -524,9 +524,9 @@ $ tail -3 README.md
 |---|---|
 | ![메뉴](docs/screenshots/menu.png) | 메뉴와 잘못된 입력 처리 |
 | ![퀴즈 풀기](docs/screenshots/play.png) | 퀴즈 풀이와 결과, 최고 점수 갱신 |
-| ![퀴즈 추가](docs/screenshots/add_quiz.png) | 퀴즈 추가 과정 |
+| ![퀴즈 추가](docs/screenshots/add.png) | 퀴즈 추가 과정 |
 | ![퀴즈 목록](docs/screenshots/list.png) | 퀴즈 목록 |
 | ![점수 확인](docs/screenshots/score.png) | 최고 점수 확인 |
-| ![재실행 후 유지](docs/screenshots/reload.png) | 종료 후 재실행했을 때 데이터 유지 |
+| ![재실행 후 유지](docs/screenshots/load.png) | 종료 후 재실행했을 때 데이터 유지 |
 
 > clone/pull 실습: 복제한 저장소에서 추가한 한 줄입니다.
