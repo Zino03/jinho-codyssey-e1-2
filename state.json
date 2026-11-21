@@ -59,7 +59,17 @@
                 "import / from"
             ],
             "answer": 2
+        },
+        {
+            "question": "진호의 나이는?",
+            "choices": [
+                "19",
+                "20",
+                "24",
+                "28"
+            ],
+            "answer": 3
         }
     ],
-    "best_score": 100
+    "best_score": 71
 }

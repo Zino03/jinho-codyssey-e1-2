@@ -24,6 +24,19 @@ def read(prompt, low, high):
             print("숫자를 입력해주세요.\n")
 
 
+# 문자열 입력 받기
+# 터미널 인코딩 문제로 깨진 글자(UTF-8로 저장 불가)가 들어오면 다시 입력받음
+def read_text(prompt):
+    while True:
+        text = input(prompt).strip() # 앞뒤 공백 제거
+        try:
+            text.encode("utf-8") # 저장 가능한 문자인지 확인
+        except UnicodeEncodeError:
+            print("입력한 글자를 처리할 수 없습니다. 다시 입력해주세요.\n")
+            continue
+        return text
+
+
 class QuizGame:
     def __init__(self):
         self.quizzes = self.default_quizzes() # 기본 퀴즈
@@ -107,7 +120,7 @@ class QuizGame:
     def add_quiz(self): # 퀴즈 추가
         print("추가하실 퀴즈를 입력해주세요")
         while True:
-            question = input("문제: ").strip() # 공백만 있는 문자열 처리
+            question = read_text("문제: ") # 공백만 있는 문자열 처리
             if question == "": # 빈 문자열 입력 받은 경우 처리
                 print("문제를 입력해주세요.")
                 continue
@@ -116,7 +129,7 @@ class QuizGame:
         choices = [] # 선택지 담을 리스트
         n = 1 # 선택지 번호 넘버링
         while True:
-            c = input(f"{n}번 선택지: ").strip() # 공백만 있는 문자열 처리
+            c = read_text(f"{n}번 선택지: ") # 공백만 있는 문자열 처리
             if c == "": # 빈 문자열 입력 받은 경우 처리
                 print("선택지를 입력해주세요.")
                 continue
@@ -183,10 +196,11 @@ class QuizGame:
             "best_score": self.best_score,
         }
         try: # 파일 쓰기 실패할 수도 있으니 try-except 사용
+            text = json.dumps(data, ensure_ascii=False, indent=4) # 먼저 문자열로 변환 (한글을 그대로 저장, 들여쓰기 사용)
+            text.encode("utf-8") # UTF-8로 저장 가능한지 미리 확인 (불가능하면 UnicodeEncodeError, 파일은 건드리지 않음)
             with open(STATE_FILE, "w", encoding="utf-8") as f: # 쓰기 모드로 open
-                json.dump(data, f, ensure_ascii=False, indent=4)
-                # 데이터를 json 형식으로 f에 쓰고, 한글을 그대로 저장, 들여쓰기 사용
-        except OSError:
+                f.write(text)
+        except (OSError, UnicodeEncodeError):
             print("파일 저장에 실패했습니다. 이번 변경 내용은 저장되지 않을 수 있습니다.\n") # 프로그램은 멈추지 않고 안내만 출력
 
     def load_state(self): # state.json에서 데이터를 불러옴 (파일이 없거나 손상되면 기본 데이터를 사용)
