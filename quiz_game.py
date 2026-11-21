@@ -1,10 +1,12 @@
 import json # json 파일 읽고 쓰는 표준 library
+import shutil # 파일 복사 (백업용)
 from pathlib import Path # 파일 경로 다루는 도구
 
 from quiz import Quiz
 
 # state.json의 위치: 해당 파일이 있는 폴더
 STATE_FILE = Path(__file__).parent / "state.json"
+BACKUP_FILE = Path(__file__).parent / "state.json.bak" # 백업 파일 (저장 직전의 정상 state.json)
 
 # 선택 값 읽기
 # 제대로 된 값이 입력될 때까지 반복하고 정수 반환
@@ -198,29 +200,50 @@ class QuizGame:
         try: # 파일 쓰기 실패할 수도 있으니 try-except 사용
             text = json.dumps(data, ensure_ascii=False, indent=4) # 먼저 문자열로 변환 (한글을 그대로 저장, 들여쓰기 사용)
             text.encode("utf-8") # UTF-8로 저장 가능한지 미리 확인 (불가능하면 UnicodeEncodeError, 파일은 건드리지 않음)
+            self.backup_state() # 덮어쓰기 전에 현재 정상 파일을 백업
             with open(STATE_FILE, "w", encoding="utf-8") as f: # 쓰기 모드로 open
                 f.write(text)
         except (OSError, UnicodeEncodeError):
             print("파일 저장에 실패했습니다. 이번 변경 내용은 저장되지 않을 수 있습니다.\n") # 프로그램은 멈추지 않고 안내만 출력
 
-    def load_state(self): # state.json에서 데이터를 불러옴 (파일이 없거나 손상되면 기본 데이터를 사용)
+    def backup_state(self): # 저장 직전, 현재 state.json이 정상이면 state.json.bak으로 복사
         try:
-            with open(STATE_FILE, "r", encoding="utf-8") as f: # 읽기 모드로 open
-                data = json.load(f) # 파일 내용을 읽음 (json 문법이 깨져 있으면 JSONDecodeError)
-            quizzes = [Quiz.from_dict(item) for item in data["quizzes"]] # 딕셔너리들을 Quiz 객체로 복원
-            # 키가 없으면 KeyError, 내용이 잘못되면 ValueError
-            best_score = data["best_score"] # 최고 점수 읽기 (키가 없으면 KeyError)
-            if (not isinstance(best_score, int) or isinstance(best_score, bool)
-                    or not -1 <= best_score <= 100): # 정수가 아니거나, bool이거나, 범위 밖이면 ValueError
-                raise ValueError("최고 점수가 올바르지 않습니다.")
+            self.read_state_file(STATE_FILE) # 정상 파일인지 확인 (손상된 파일로 기존 백업을 덮어쓰지 않기 위함)
+            shutil.copyfile(STATE_FILE, BACKUP_FILE)
+        except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+            pass # 파일이 없거나 손상됨: 백업하지 않고 넘어감 (저장은 계속 진행)
+
+    def read_state_file(self, path): # 파일을 읽어 (퀴즈 리스트, 최고 점수)를 반환. 문제가 있으면 예외 발생
+        with open(path, "r", encoding="utf-8") as f: # 읽기 모드로 open
+            data = json.load(f) # 파일 내용을 읽음 (json 문법이 깨져 있으면 JSONDecodeError)
+        quizzes = [Quiz.from_dict(item) for item in data["quizzes"]] # 딕셔너리들을 Quiz 객체로 복원
+        # 키가 없으면 KeyError, 내용이 잘못되면 ValueError
+        best_score = data["best_score"] # 최고 점수 읽기 (키가 없으면 KeyError)
+        if (not isinstance(best_score, int) or isinstance(best_score, bool)
+                or not -1 <= best_score <= 100): # 정수가 아니거나, bool이거나, 범위 밖이면 ValueError
+            raise ValueError("최고 점수가 올바르지 않습니다.")
+        return quizzes, best_score
+
+    def load_state(self): # state.json에서 데이터를 불러옴 (손상되면 백업, 그것도 안 되면 기본 데이터를 사용)
+        try:
+            quizzes, best_score = self.read_state_file(STATE_FILE)
         except FileNotFoundError: # open 시 파일이 없는 경우
             # 첫 실행: 기본 퀴즈를 그대로 쓰고 파일을 새로 만든다
             self.save_state() # 기본 데이터로 state.json을 새로 만듦
             return
         except (json.JSONDecodeError, KeyError, TypeError, ValueError):
-            # 파일이 있지만 내용이 손상됨: 기본 데이터로 초기화
-            print("저장 파일이 손상되어 기본 퀴즈로 초기화합니다.\n")
-            self.save_state() # 기본 데이터로 복구
+            # 파일이 있지만 내용이 손상됨: 백업 파일로 복구 시도
+            try:
+                quizzes, best_score = self.read_state_file(BACKUP_FILE)
+            except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+                # 백업도 없거나 손상됨: 기본 데이터로 초기화
+                print("저장 파일이 손상되어 기본 퀴즈로 초기화합니다.\n")
+                self.save_state() # 기본 데이터로 복구
+                return
+            print("저장 파일이 손상되어 백업(state.json.bak)으로 복구합니다.\n")
+            self.quizzes = quizzes
+            self.best_score = best_score
+            self.save_state() # 복구한 내용으로 state.json을 다시 만듦
             return
         except OSError:
             # 읽기 권한 등 파일 접근 문제
